@@ -4,7 +4,8 @@ Serves dashboard/ plus a small local API so the page can do everything itself:
 pick folders, peek at a folder, run the whole sort (scan, duplicates, Claude labels,
 build folders) with live progress, edit folders, browse photos at full size, move a
 photo to another folder, and open folders in Finder.
-Listens on 127.0.0.1 only: nothing is reachable from other computers.
+Listens on 0.0.0.0 by default so the iOS companion app can reach it over Wi-Fi.
+Set HOST=127.0.0.1 to restrict to localhost only.
 """
 import glob, hashlib, io, json, mimetypes, os, random, re, shutil, subprocess, sys, threading, time, urllib.parse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -373,5 +374,6 @@ class H(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     os.makedirs(DATA, exist_ok=True)
-    print(f"Photo sorter running at http://127.0.0.1:{PORT}  (Ctrl+C to stop)", flush=True)
-    ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever()
+    HOST = os.environ.get("HOST", "0.0.0.0")
+    print(f"Photo sorter running at http://{HOST}:{PORT}  (Ctrl+C to stop)", flush=True)
+    ThreadingHTTPServer((HOST, PORT), H).serve_forever()

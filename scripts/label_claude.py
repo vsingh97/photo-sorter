@@ -26,7 +26,8 @@ if not claude:
 sheet_dir = os.path.join(WORK, "sheets")
 if not glob.glob(os.path.join(sheet_dir, "sheet_*.jpg")):
     subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), "sheets.py")], check=True)
-sheets = sorted(glob.glob(os.path.join(sheet_dir, "sheet_*.jpg")))
+sheets = sorted(glob.glob(os.path.join(sheet_dir, "sheet_*.jpg")),
+                key=lambda p: int(re.search(r"sheet_(\d+)", p).group(1)))
 inv = load(os.path.join(DATA, "inventory.json"))
 cats = categories()
 os.makedirs(LABELS, exist_ok=True)
